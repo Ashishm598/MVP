@@ -46,6 +46,8 @@ public class SplashScreenActivity extends AppCompatActivity implements SplashScr
     @Override
     public void navigateToSearchActivity() {
         myIntent = new Intent(SplashScreenActivity.this, SearchActivity.class);
+        myIntent.setFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
+        overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
         startActivity(myIntent);
         SplashScreenActivity.this.finish();
     }
