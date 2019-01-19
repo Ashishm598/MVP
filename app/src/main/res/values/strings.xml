@@ -1,4 +1,5 @@
 <resources>
     <string name="app_name">Twitter Search</string>
     <string name="search_tweets">Search Tweets</string>
+    <string name="sample_text">There are many variations of passages of Lorem Ipsum available, but the majority have suffered alteration in some form, by injected humour, or randomised words which don\'t look even slightly believable.</string>
 </resources>
