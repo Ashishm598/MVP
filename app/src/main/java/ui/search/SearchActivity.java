@@ -25,24 +25,28 @@ public class SearchActivity extends AppCompatActivity implements SearchActivityM
     ConstraintSet mConstraintSet2 = new ConstraintSet(); // create a Constraint Set
 
 
+    View.OnFocusChangeListener onFocusChangeListener = new View.OnFocusChangeListener() {
+        @Override
+        public void onFocusChange(View v, boolean hasFocus) {
+            TransitionManager.beginDelayedTransition(constraintLayout);
+            mConstraintSet2.applyTo(constraintLayout); // set new constraints
+        }
+    };
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        injectDependency(); // Dagger
         setContentView(R.layout.activity_search);
-        ButterKnife.bind(this);
+        injectDependency(); // Dagger
+        ButterKnife.bind(this); // ButterKnife
         initView(); // view init
 
         mConstraintSet1.clone(constraintLayout); // get constraints from ConstraintSet
         mConstraintSet2.clone(this, R.layout.activity_search_final); // get constraints from final
 
-        searchView.setOnQueryTextFocusChangeListener(new View.OnFocusChangeListener() {
-            @Override
-            public void onFocusChange(View v, boolean hasFocus) {
-                TransitionManager.beginDelayedTransition(constraintLayout);
-                mConstraintSet2.applyTo(constraintLayout); // set new constraints
-            }
-        });
+        // onFocus of searchView animate the constraints
+        searchView.setOnQueryTextFocusChangeListener(onFocusChangeListener);
 
 
     }
@@ -56,5 +60,11 @@ public class SearchActivity extends AppCompatActivity implements SearchActivityM
     @Override
     public void injectDependency() {
 
+    }
+
+
+    @Override
+    public void onBackPressed() {
+        finish();
     }
 }
