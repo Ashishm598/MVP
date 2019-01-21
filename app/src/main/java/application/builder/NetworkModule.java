@@ -2,24 +2,23 @@ package application.builder;
 
 import android.content.Context;
 
+import com.google.gson.GsonBuilder;
 import com.twittersearch.ashish.twittersearch.BuildConfig;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.concurrent.TimeUnit;
 
-import api.API;
 import dagger.Module;
 import dagger.Provides;
 import okhttp3.Cache;
-import okhttp3.HttpUrl;
-import okhttp3.Interceptor;
 import okhttp3.OkHttpClient;
-import okhttp3.Request;
-import okhttp3.Response;
 import okhttp3.logging.HttpLoggingInterceptor;
 import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory;
 import retrofit2.converter.gson.GsonConverterFactory;
+import utils.AutoValueGsonFactory;
+import utils.Util;
+import utils.oauth1.Constants;
+import utils.oauth1.Oauth1SigningInterceptor;
 
 /**
  * Created by johns on 9/28/2017.
@@ -28,8 +27,6 @@ import retrofit2.converter.gson.GsonConverterFactory;
 @Module
 public class NetworkModule {
 
-    private static final String AUTH_HEADER = "Authorization";
-    public static final String X_AUTH_TOKEN = "X-Auth-Token";
     private static final int HTTP_READ_TIMEOUT = 25;
     private static final int HTTP_WRITE_TIMEOUT = 25;
     private static final int HTTP_CONNECT_TIMEOUT = 25;
@@ -37,14 +34,14 @@ public class NetworkModule {
 
     @AppScope
     @Provides
-    OkHttpClient provideHttpClient(Interceptor keyIntercepter, HttpLoggingInterceptor logger, Cache cache) {
+    OkHttpClient provideHttpClient(Oauth1SigningInterceptor OauthIntercepter, HttpLoggingInterceptor logger, Cache cache) {
 
         OkHttpClient.Builder builder = new OkHttpClient().newBuilder();
         if (BuildConfig.DEBUG) {
             builder.addInterceptor(logger);
         }
 
-        builder.addInterceptor(keyIntercepter);
+        builder.addInterceptor(OauthIntercepter);
         builder.cache(cache);
         builder.readTimeout(HTTP_READ_TIMEOUT, TimeUnit.SECONDS);
         builder.writeTimeout(HTTP_WRITE_TIMEOUT, TimeUnit.SECONDS);
@@ -53,6 +50,22 @@ public class NetworkModule {
         return builder.build();
     }
 
+
+    @AppScope
+    @Provides
+    Oauth1SigningInterceptor provideOauthSigningInterceptor() {
+        return new Oauth1SigningInterceptor.Builder()
+                .consumerKey(Constants.oauth_consumer_key)
+                .consumerSecret(Constants.oauth_consumer_secret)
+                .accessToken(Constants.oauth_token)
+                .accessSecret(Constants.oauth_token_secret)
+                .random(Util.getRandom())
+                .clock(Util.getCurrentTimeStamp())
+                .build();
+
+    }
+
+
     @AppScope
     @Provides
     HttpLoggingInterceptor provideLoggingInterceptor() {
@@ -60,33 +73,6 @@ public class NetworkModule {
         httpLoggingInterceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
         return httpLoggingInterceptor;
     }
-
-    @AppScope
-    @Provides
-    Interceptor provideInterceptor() {
-        return new Interceptor() {
-            @Override
-            public Response intercept(Chain chain) throws IOException {
-                /*
-                Request request = chain.request().newBuilder().addHeader(AUTH_HEADER, "APIKEY 7047874e-4f85-11e7-b114-b2f933d5fe66")
-                        .addHeader("X-TZ", GeneralUtil.getTimeZoneOffset())
-                        .build();
-                */
-
-                Request original = chain.request();
-                HttpUrl httpUrl = original.url();
-
-                HttpUrl newHttpUrl = httpUrl.newBuilder().addQueryParameter("ws_key", API.API_KEY).build();
-
-                Request.Builder requestBuilder = original.newBuilder().url(newHttpUrl);
-                Request request = requestBuilder.build();
-
-
-                return chain.proceed(request);
-            }
-        };
-    }
-
 
     @AppScope
     @Provides
@@ -109,6 +95,6 @@ public class NetworkModule {
 
     @Provides
     GsonConverterFactory provideGsonClient() {
-        return GsonConverterFactory.create();
+        return GsonConverterFactory.create(new GsonBuilder().registerTypeAdapterFactory(AutoValueGsonFactory.create()).create());
     }
 }

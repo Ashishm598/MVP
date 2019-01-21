@@ -9,7 +9,6 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.WindowManager;
 import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
-
 import com.twittersearch.ashish.twittersearch.R;
 
 import butterknife.BindView;
@@ -42,7 +41,6 @@ public class SplashScreenActivity extends AppCompatActivity implements SplashScr
         ivSplashLogo.startAnimation(AnimationUtils.loadAnimation(this, R.anim.fade_in));
         ivSplashLogo.startAnimation(AnimationUtils.loadAnimation(this, R.anim.fade_out));
 
-
         new Handler().postDelayed(new Runnable() {
 
             @Override
@@ -51,10 +49,7 @@ public class SplashScreenActivity extends AppCompatActivity implements SplashScr
             }
         }, delayTime);
 
-
     }
-
-
 
     @Override
     public void navigateToSearchActivity() {
