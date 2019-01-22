@@ -76,7 +76,7 @@ public abstract class User{
 	@SerializedName("verified")
 	public abstract boolean verified();
 
-	@SerializedName("profile_image_url")
+	@SerializedName("profile_image_url_https")
 	public abstract String profileImageUrl();
 
 //	@SerializedName("time_zone")

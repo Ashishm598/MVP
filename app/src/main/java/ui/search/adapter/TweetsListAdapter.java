@@ -56,6 +56,10 @@ public class TweetsListAdapter extends RecyclerView.Adapter<TweetsListAdapter.Tw
         notifyDataSetChanged();
     }
 
+    public List<StatusesItem> getCurrentListData() {
+        return (statusList.size() > 0) ? statusList : null;
+    }
+
 
     class TweetsListViewHolder extends RecyclerView.ViewHolder {
         CircleImageView civUserProfilePic;

@@ -12,6 +12,11 @@ import org.threeten.bp.Clock;
 import org.threeten.bp.Instant;
 import org.threeten.bp.ZoneOffset;
 
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Locale;
 import java.util.Random;
 
 import okio.ByteString;
@@ -55,5 +60,19 @@ public class Util {
                 .setAction(" ", null)
                 .show();
     }
+
+
+    public long getMinutesElapsedFromDate(String fromDate) {
+        long fromDateTimeStamp = 0, currentDateTimeStamp = getCurrentTimeStamp().millis();
+        DateFormat dateFormat = new SimpleDateFormat("EEE MMM dd HH:mm:ss zzz yyyy", Locale.US);
+        try {
+            Date date = dateFormat.parse(fromDate);
+            fromDateTimeStamp = date.getTime();
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        return (fromDateTimeStamp > 0) ? (currentDateTimeStamp - fromDateTimeStamp / 1000) / 60 : 0;
+    }
+
 
 }

@@ -1,7 +1,9 @@
 package ui.search;
 
 import android.content.DialogInterface;
+import android.os.Build;
 import android.os.Bundle;
+import android.support.annotation.RequiresApi;
 import android.support.constraint.ConstraintLayout;
 import android.support.constraint.ConstraintSet;
 import android.support.transition.TransitionManager;
@@ -10,10 +12,12 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
+import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.twittersearch.ashish.twittersearch.R;
 
@@ -159,9 +163,35 @@ public class SearchActivity extends AppCompatActivity implements SearchActivityM
         progressBar.setVisibility(View.GONE);
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.N)
     @Override
     public void sortData() {
-        //TODO SORT ALGORITHM
+        List<StatusesItem> data = tweetsListAdapter.getCurrentListData();
+
+        /** Algorithm Explanation
+         * Get Data to Sort
+         * loop data by N size
+         * set score to each node (Score = favorite_count + retweet_count/ minutesElapsed
+         * SORT Data in a descending order (using Tim sort)
+         */
+
+        if (data != null) {
+            for (int i = 0; i < data.size(); i++) {
+                long favoriteCount, retweetCount, minutesElapsed, score;
+                minutesElapsed = util.getMinutesElapsedFromDate(data.get(i).createdAt());
+                favoriteCount = data.get(i).favoriteCount();
+                retweetCount = data.get(i).retweetCount();
+                score = favoriteCount + retweetCount / minutesElapsed;
+                data.get(i).setScore((int) score);
+                Log.e("SCORE", String.valueOf(favoriteCount + "+" + retweetCount + "/" + minutesElapsed + "=" + score));
+            }
+            // Tim sort to sort data on score basis
+            data.sort((o1, o2) -> Integer.valueOf(String.valueOf((o2.getScore()))).compareTo(o1.getScore()));
+            showSearchResult(data);
+        } else {
+            Toast.makeText(this, "No data to sort!", Toast.LENGTH_SHORT).show();
+        }
+
     }
 
 
@@ -188,6 +218,7 @@ public class SearchActivity extends AppCompatActivity implements SearchActivityM
         }
     };
 
+    @RequiresApi(api = Build.VERSION_CODES.N)
     @OnClick(R.id.iv_sortBtn)
     public void onViewClicked() {
         sortData();
