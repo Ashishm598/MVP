@@ -25,6 +25,7 @@ import okio.ByteString;
 public class Util {
 
     private Context mContext;
+    private DateFormat dateFormat = new SimpleDateFormat("EEE MMM dd HH:mm:ss zzz yyyy", Locale.US);
 
 
     public Util(Context context) {
@@ -63,15 +64,13 @@ public class Util {
 
 
     public long getMinutesElapsedFromDate(String fromDate) {
-        long fromDateTimeStamp = 0, currentDateTimeStamp = getCurrentTimeStamp().millis();
-        DateFormat dateFormat = new SimpleDateFormat("EEE MMM dd HH:mm:ss zzz yyyy", Locale.US);
+        long fromDateTimeStamp = 0;
         try {
-            Date date = dateFormat.parse(fromDate);
-            fromDateTimeStamp = date.getTime();
+            fromDateTimeStamp = dateFormat.parse(fromDate).getTime();
         } catch (ParseException e) {
             e.printStackTrace();
         }
-        return (fromDateTimeStamp > 0) ? (currentDateTimeStamp - fromDateTimeStamp / 1000) / 60 : 0;
+        return (fromDateTimeStamp > 0) ? (getCurrentTimeStamp().millis() - fromDateTimeStamp / 1000) / 60 : 0;
     }
 
 

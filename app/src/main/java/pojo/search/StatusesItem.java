@@ -68,13 +68,13 @@ public abstract class StatusesItem {
     @SerializedName("user")
     public abstract User user();
 
-    private int score;
+    private long score;
 
-    public int getScore() {
+    public long getScore() {
         return score;
     }
 
-    public void setScore(int score) {
+    public void setScore(long score) {
         this.score = score;
     }
 

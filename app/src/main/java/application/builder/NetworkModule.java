@@ -20,9 +20,6 @@ import utils.Util;
 import utils.oauth1.Constants;
 import utils.oauth1.Oauth1SigningInterceptor;
 
-/**
- * Created by johns on 9/28/2017.
- */
 
 @Module
 public class NetworkModule {

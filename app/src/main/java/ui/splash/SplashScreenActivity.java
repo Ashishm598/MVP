@@ -26,7 +26,6 @@ public class SplashScreenActivity extends AppCompatActivity implements SplashScr
     ImageView ivSplashLogo;
 
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -41,13 +40,7 @@ public class SplashScreenActivity extends AppCompatActivity implements SplashScr
         ivSplashLogo.startAnimation(AnimationUtils.loadAnimation(this, R.anim.fade_in));
         ivSplashLogo.startAnimation(AnimationUtils.loadAnimation(this, R.anim.fade_out));
 
-        new Handler().postDelayed(new Runnable() {
-
-            @Override
-            public void run() {
-                navigateToSearchActivity();
-            }
-        }, delayTime);
+        new Handler().postDelayed(this::navigateToSearchActivity, delayTime);
 
     }
 

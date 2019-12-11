@@ -22,7 +22,10 @@ import android.widget.Toast;
 import com.twittersearch.ashish.twittersearch.R;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import javax.inject.Inject;
 
@@ -167,33 +170,15 @@ public class SearchActivity extends AppCompatActivity implements SearchActivityM
     @Override
     public void sortData() {
         List<StatusesItem> data = tweetsListAdapter.getCurrentListData();
-
-        /** Algorithm Explanation
-         * Get Data to Sort
-         * loop data by N size
-         * set score to each node (Score = favorite_count + retweet_count/ minutesElapsed
-         * SORT Data in a descending order (using Tim sort)
-         */
-
         if (data != null) {
-            for (int i = 0; i < data.size(); i++) {
-                long favoriteCount, retweetCount, minutesElapsed, score;
-                minutesElapsed = util.getMinutesElapsedFromDate(data.get(i).createdAt());
-                favoriteCount = data.get(i).favoriteCount();
-                retweetCount = data.get(i).retweetCount();
-                score = favoriteCount + retweetCount / minutesElapsed;
-                data.get(i).setScore((int) score);
-                Log.e("SCORE", String.valueOf(favoriteCount + "+" + retweetCount + "/" + minutesElapsed + "=" + score));
-            }
-            // Tim sort to sort data on score basis
-            data.sort((o1, o2) -> Integer.valueOf(String.valueOf((o2.getScore()))).compareTo(o1.getScore()));
+            data.forEach(x -> x.setScore(x.favoriteCount() + x.retweetCount() / util.getMinutesElapsedFromDate(x.createdAt())));
+            data.stream().sorted(Comparator.comparingLong(StatusesItem::getScore)).collect(Collectors.toList());
             showSearchResult(data);
         } else {
             Toast.makeText(this, "No data to sort!", Toast.LENGTH_SHORT).show();
         }
 
     }
-
 
     View.OnFocusChangeListener onFocusChangeListener = new View.OnFocusChangeListener() {
         @Override
