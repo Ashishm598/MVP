@@ -37,10 +37,6 @@ public interface SearchActivityMVP {
 
     interface Presenter extends GlobalPresenter {
 
-        void onNext(SearchResponse statuses);
-
-        void onError(Throwable error);
-
         void searchText(String query);
 
     }

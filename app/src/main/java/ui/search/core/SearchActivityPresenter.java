@@ -51,13 +51,11 @@ public class SearchActivityPresenter implements SearchActivityMVP.Presenter {
     }
 
 
-    @Override
-    public void onNext(SearchResponse result) {
+    private void onNext(SearchResponse result) {
         view.showSearchResult(result.statusesItems());
     }
 
-    @Override
-    public void onError(Throwable error) {
+    private void onError(Throwable error) {
         view.hideProgressBar();
         view.handelErrorOnSearch(error);
     }
@@ -68,7 +66,6 @@ public class SearchActivityPresenter implements SearchActivityMVP.Presenter {
 
             view.showProgressBar();
 
-            // SORT ALGO
             searchResponseObservable = model.getSearchedTweetsObservable(query, RECENT_RESULT);
 
             if (searchResponseObservable != null) {
